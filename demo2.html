@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>面向对象</title>
+    <link rel="stylesheet" href="demo.css" >
+</head>
+<body>
+    <h1>面向对象软件体系结构</h1>
+    <h3>原理图：</h3>
+    <p>
+        <img src="https://img-blog.csdnimg.cn/20201209233922504.png#pic_center" alt="">
+    </p>
+    <br><br><br>
+    <h3>文字说明：</h3>
+    <p>
+        面向对象体系结构风格的组件是类和对象。
+    </P>
+    <p>
+        面向对象的体系结构与传统的体系结构不同，它强调的是分布式对象的分配、部件及其界面、面向对象的通信方法。
+    </p>
+    <P>
+        连接件是对象之间通过功能与函数调用实现交互。对象是通过函数和过程的调用-返回机制来交互的，而类是通过定义对象，再采用调用-返回机制进行交互。
+    </p>
+    <br><br><br>
+    <h3>源程序代码结构</h3>
+    <h5>Input类</h5>
+    <pre>
+        package S1;
+
+        import java.io.*;
+        import java.util.*;
+        
+        public class Input {
+            private ArrayList<String> lineTxt = new ArrayList<String>();
+        
+            public ArrayList<String> getLineTxt() {
+                return lineTxt;
+            }
+        
+            public void input(String fileName) {
+                BufferedReader inputFile = null;
+                try {
+                    inputFile = new BufferedReader(new FileReader(fileName));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                String line;
+                try {
+                    while ((line = inputFile.readLine()) != null) {
+                        lineTxt.add(line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    </pre>
+    <br><br>
+    <h5>Shift类</h5>
+    <pre>
+        package S1;
+
+        import java.io.*;
+        import java.util.*;
+        
+        public class Shift {
+            private ArrayList<String> kwicList = new ArrayList<String>();
+            private ArrayList<String> lineTxt;
+        
+            public Shift( ArrayList<String> lineTxt) {
+                this.lineTxt = lineTxt;
+            }
+        
+            public ArrayList<String> getKwicList() {
+                return kwicList;
+            }
+        
+        
+            public ArrayList<String> getLineTxt() {
+                return lineTxt;
+            }
+        
+        
+            public void shift() {
+                //获取每个单词，存入tokens
+                Iterator<String> it = lineTxt.iterator();
+                while (it.hasNext()) {
+                    StringTokenizer token = new StringTokenizer(it.next());
+                    ArrayList<String> tokens = new ArrayList<String>();
+                    int i = 0;
+                    //循环添加单词
+                    int count = token.countTokens();
+                    while (i < count) {
+                        tokens.add(token.nextToken());
+                        i++;
+                    }
+        
+                    //display(tokens);
+                    //切割各个单词，不断改变起始值和利用loop实现位移。
+                    for (i = 0; i < count; i++) {
+                        StringBuffer lineBuffer = new StringBuffer();
+                        int index = i;
+                        for (int f = 0; f < count; f++) {
+                            //从头继续位移
+                            if (index >= count)
+                                index = 0;
+                            //存入StringBuffer
+                            lineBuffer.append(tokens.get(index));
+                            lineBuffer.append(" ");
+                            index++;
+                        }
+                        String tmp = lineBuffer.toString();
+                        kwicList.add(tmp);
+                    }
+                }
+        
+            }
+        }
+        
+        
+    </pre>
+    <h5>Alphabetizer类</h5>
+    <pre>
+        package S1;
+
+        import java.io.*;
+        import java.util.*;
+        
+        public class Alphabetizer {
+            private ArrayList<String> kwicList;
+        
+            public Alphabetizer(ArrayList<String> kwicList) {
+                this.kwicList = kwicList;
+            }
+        
+            public ArrayList<String> getKwicList() {
+                return kwicList;
+            }
+        
+            public void sort() {
+                Collections.sort(this.kwicList, new AlphabetizerComparator());
+            }
+        
+            private class AlphabetizerComparator implements Comparator<String> {
+                @Override
+                public int compare(String o1, String o2) {
+                    if (o1 == null && o2 == null) {
+                        throw new NullPointerException();
+                    }
+                    int compareValue = 0;
+                    char o1c = o1.toLowerCase().charAt(0); //忽略大小写
+                    char o2c = o2.toLowerCase().charAt(0); //忽略大小写
+                    compareValue = o1c - o2c;
+                    return compareValue;
+        
+                }
+        
+            }
+        }
+        
+    </pre>
+    <h5>Output类</h5>
+    <pre>
+        package S1;
+
+        import java.io.*;
+        import java.util.*;
+        
+        public class Output {
+            private ArrayList<String> kwicList;
+            private BufferedWriter outputFile;
+        
+            public Output(ArrayList<String> kwicList) {
+                this.kwicList = kwicList;
+            }
+        
+            public void output(String filename){
+                Iterator<String> it = kwicList.iterator();
+                try {
+                    outputFile = new BufferedWriter(new FileWriter(filename));
+                    while (it.hasNext()) {
+                        outputFile.write(it.next()+"\n");
+                    }
+                }catch (IOException e){
+                    e.printStackTrace();
+                }finally {
+                    try {
+                        if (outputFile!=null) {
+                            outputFile.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        
+        
+    </pre>
+    <h5>Main类</h5>
+    <pre>
+        package S1;
+
+        import java.io.*;
+        import java.util.*;
+        
+        public class Main {
+            public static void main(String[] args) {
+                Input input = new Input();
+                input.input("G:\\实训\\新建文件夹\\input.txt");
+                Shift shift = new Shift(input.getLineTxt());
+                shift.shift();
+                Alphabetizer alphabetizer = new Alphabetizer(shift.getKwicList());
+                alphabetizer.sort();
+                Output output = new Output(alphabetizer.getKwicList());
+                output.output("G:\\实训\\新建文件夹\\output.txt");
+        
+            }
+        }
+        
+        
+    </pre>
+</body>
+</html>
