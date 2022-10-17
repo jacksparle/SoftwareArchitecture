@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.wolfcode.dao.RoleDao">
+
+    <select id="selectRole" parameterType="java.lang.String" resultType="cn.wolfcode.entity.T_Role">
+        select  * from test_1 where rid = #{str}
+    </select>
+
+    <update id="UpdateRole" parameterType="cn.wolfcode.entity.T_Role">
+        update test_1 set rid = #{rid} ,
+                            rname = #{rname} , rdesc = #{rdesc} ,
+                             where rid = #{rid}
+    </update>
+】、
+    <insert id="insertRole" parameterType="cn.wolfcode.entity.T_Role">
+        INSERT into test_1 values (#{rid},#{rname},#{rdesc})
+    </insert>
+
+    <select id="selectRole1" parameterType="java.util.Map" resultType="cn.wolfcode.entity.T_Role">
+        SELECT * FROM test_1
+        <where>
+        <choose>
+        <when test = 'type== "rid"'>rid = #{str}</when>
+        <when test='type== "rname"'>rname = #{str}</when>
+        <when test='type== "rdesc"'>rdesc = #{str}</when>
+        </choose>
+        </where>
+
+
+    </select>
+
+</mapper>
